@@ -19,6 +19,18 @@ import type { CommandClass, ParsedCommand } from '../types.js';
  */
 const SHELL_CONTROL_CHARS = /[;&|<>`$(){}\n\r]/;
 
+// This is a complete, deliberately small argv grammar, not a quote-aware
+// relaxation of SHELL_CONTROL_CHARS. Only Docker's list operation, recognized
+// non-writing options and quoted field-selector templates qualify. No shell
+// expansion, extra operand, second format flag or arbitrary template program
+// can reach this exception. Other readers retain the existing strict gate.
+const DOCKER_PS_FIELD = String.raw`\{\{\.[A-Za-z][A-Za-z0-9_]*\}\}`;
+const DOCKER_PS_FORMAT = `(?:'${DOCKER_PS_FIELD}(?:[ \\t]+${DOCKER_PS_FIELD})*'|"${DOCKER_PS_FIELD}(?:[ \\t]+${DOCKER_PS_FIELD})*")`;
+const DOCKER_PS_OPTION = String.raw`(?:-a|--all|--no-trunc|-q|--quiet|-s|--size|--filter[ \t]+[A-Za-z0-9_.:/=-]+)`;
+const FORMATTED_DOCKER_PS = new RegExp(
+  `^docker[ \\t]+ps(?:[ \\t]+${DOCKER_PS_OPTION})*[ \\t]+--format[ \\t]+${DOCKER_PS_FORMAT}(?:[ \\t]+${DOCKER_PS_OPTION})*$`,
+);
+
 const READ_ONLY_ALLOWLIST = new Set([
   'ls', 'cat', 'grep', 'find', 'stat', 'df', 'du', 'head', 'tail', 'wc',
   'ps', 'uname', 'uptime', 'hostname', 'id', 'who', 'whoami', 'date',
@@ -129,7 +141,7 @@ export function classifyCommand(command: string): ParsedCommand {
 
   const twoWordPrefix = fullCommand.split(/\s+/).slice(0, 2).join(' ');
   if (READ_ONLY_ALLOWLIST.has(binary) || READ_ONLY_ALLOWLIST.has(twoWordPrefix)) {
-    if (SHELL_CONTROL_CHARS.test(trimmed)) {
+    if (SHELL_CONTROL_CHARS.test(trimmed) && !FORMATTED_DOCKER_PS.test(trimmed)) {
       return { binary, fullCommand, class: 'safe' as CommandClass };
     }
     return { binary, fullCommand, class: 'read-only' as CommandClass };
