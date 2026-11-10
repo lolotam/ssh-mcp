@@ -1,8 +1,8 @@
 {
-  "name": "ssh-mcp",
+  "name": "@lolotam/ssh-mcp",
   "license": "MIT",
-  "version": "2.1.0",
-  "description": "MCP server exposing policy-gated, audited SSH access for Linux and Windows hosts via the Model Context Protocol.",
+  "version": "2.1.0-waleed.1",
+  "description": "Waleed-maintained ssh-mcp 2.1.0 fork with bounded Docker ps field formatting.",
   "type": "module",
   "bin": {
     "ssh-mcp": "build/index.js"
@@ -22,7 +22,8 @@
     "test:e2e": "npm run build && cross-env SSH_MCP_DISABLE_MAIN=1 vitest --run test/e2e/"
   },
   "files": [
-    "build"
+    "build",
+    "WALEED-FORK.md"
   ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
@@ -53,13 +54,13 @@
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
   },
-  "homepage": "https://github.com/tufantunc/ssh-mcp#readme",
+  "homepage": "https://github.com/lolotam/ssh-mcp#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tufantunc/ssh-mcp.git"
+    "url": "git+https://github.com/lolotam/ssh-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/tufantunc/ssh-mcp/issues"
+    "url": "https://github.com/lolotam/ssh-mcp/issues"
   },
   "keywords": [
     "ssh",

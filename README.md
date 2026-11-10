@@ -1,3 +1,5 @@
+> Waleed scoped fork: see [WALEED-FORK.md](WALEED-FORK.md) for exact base, scope and security limitations.
+
 # SSH MCP Server v2
 
 [![NPM Version](https://img.shields.io/npm/v/ssh-mcp)](https://www.npmjs.com/package/ssh-mcp)
